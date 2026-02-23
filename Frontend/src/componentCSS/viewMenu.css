@@ -1,0 +1,66 @@
+.viewMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.viewMenu h1 {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.viewMenuText {
+  color: var(--primary-color);
+  max-width: 62%;
+}
+
+.viewMenuList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  text-align: center;
+  margin: 20px 0px;
+  overflow-x: scroll;
+}
+
+.viewMenuList::-webkit-scrollbar {
+  display: none;
+}
+
+.menuListItem img {
+  width: 7.5vw;
+  min-width: 80px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.menuListItem p {
+  margin-top: 10px;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: 1s;
+}
+
+.viewMenu hr {
+  margin: 10px 0px;
+  height: 2px;
+  background-color: var(--primary-color);
+  border: none;
+}
+
+.menuListItem .active {
+  border: 3px solid tomato;
+  border-radius: 50%;
+  transition: none;
+  padding: 2px;
+}
+
+/* Responsive Site */
+
+@media (max-width: 1050px) {
+  .viewMenuText {
+    max-width: 100%;
+    font-size: 14px;
+  }
+}

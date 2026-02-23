@@ -1,0 +1,153 @@
+.navbar {
+  padding: 20px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  width: 120px;
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  list-style: none;
+  gap: 40px;
+  font-size: 18px;
+  color: var(--primary-color);
+}
+.menu li {
+  cursor: pointer;
+}
+
+.nav-right {
+  display: flex;
+  gap: 40px;
+
+  align-items: center;
+}
+
+.nav-right button {
+  background: transparent;
+  font-size: 16px;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 8px 15px;
+  border-radius: 150px;
+  cursor: pointer;
+  transition: 0.7s;
+}
+
+.nav-right button:hover {
+  background-color: tomato;
+  color: var(--primary-color);
+  border: 1px solid tomato;
+}
+
+.active {
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.nav-search-icon {
+  position: relative;
+}
+
+.dot {
+  position: absolute;
+  min-height: 10px;
+  min-width: 10px;
+  background-color: tomato;
+  border-radius: 50%;
+  top: -8px;
+  right: -3px;
+}
+
+/* Responsive Site */
+
+/* For width of 1050 px */
+@media (max-width: 1050px) {
+  .navbar .logo {
+    width: 140px;
+  }
+  .menu {
+    gap: 20px;
+    font-size: 17px;
+  }
+  .nav-right {
+    gap: 30px;
+  }
+  .nav-right img {
+    width: 22px;
+  }
+  .nav-right button {
+    padding: 8px 25px;
+  }
+}
+
+/* For width of 900 px */
+@media (max-width: 900px) {
+  .navbar .logo {
+    width: 120px;
+  }
+  .menu {
+    gap: 15px;
+    font-size: 16px;
+  }
+  .nav-right {
+    gap: 20px;
+  }
+  .nav-right img {
+    width: 20px;
+  }
+  .nav-right button {
+    padding: 7px 20px;
+    font-size: 15px;
+  }
+}
+
+/* For width of 750 px */
+@media (max-width: 750px) {
+  .menu {
+    display: none;
+  }
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  display: none;
+  right: 0;
+  z-index: 1;
+}
+
+.navbar-profile:hover .profile-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fff2ef;
+  padding: 12px 15px;
+  border-radius: 5px;
+  border: 1px solid tomato;
+  outline: 2px solid white;
+  list-style: none;
+}
+
+.profile-dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profile-dropdown img {
+  width: 20px;
+}
+
+.profile-dropdown li:hover {
+  color: tomato;
+}
