@@ -11,11 +11,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["Easypaisa", "JazzCash", "Bank", "COD"], // supported payments
     required: true 
   },
-  status: { 
-    type: String, 
-    enum: ["Pending", "Paid", "Failed", "COD"], 
-    default: "Pending" 
-  },
+ 
   date: { type: Date, default: Date.now() }, // order date
 });
 

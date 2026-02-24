@@ -17,14 +17,13 @@ module.exports = {
         });
       }
 
-      // Create new order
+      // Create new order (NO STATUS FIELD)
       const newOrder = new orderModel({
         userId,
         items,
         amount,
         address,
-        paymentMethod,
-        status: paymentMethod === "COD" ? "COD" : "Pending",
+        paymentMethod, // only save payment method
       });
 
       await newOrder.save(); // Save order to DB
@@ -32,24 +31,30 @@ module.exports = {
       // Clear user's cart
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
-      // For online payment methods, send payment instructions
+      // Static payment instructions
       if (paymentMethod === "Easypaisa") {
-        // Example: send Easypaisa instructions
         return res.send({
           success: true,
-          message: "Order placed. Pay via Easypaisa using number: 03XXXXXXXXX",
+          message:
+            "Order placed successfully. Pay via Easypaisa using number: 03XXXXXXXXX",
           orderId: newOrder._id,
         });
-      } else if (paymentMethod === "JazzCash") {
+      }
+
+      if (paymentMethod === "JazzCash") {
         return res.send({
           success: true,
-          message: "Order placed. Pay via JazzCash using number: 03XXXXXXXXX",
+          message:
+            "Order placed successfully. Pay via JazzCash using number: 03XXXXXXXXX",
           orderId: newOrder._id,
         });
-      } else if (paymentMethod === "Bank") {
+      }
+
+      if (paymentMethod === "Bank") {
         return res.send({
           success: true,
-          message: "Order placed. Bank transfer instructions sent.",
+          message:
+            "Order placed successfully. Transfer to Bank Account: XXXX-XXXX-XXXX",
           orderId: newOrder._id,
         });
       }
@@ -57,7 +62,8 @@ module.exports = {
       // If COD
       return res.send({
         success: true,
-        message: "Order placed. Payment will be collected on delivery (COD).",
+        message:
+          "Order placed successfully. Payment will be collected on delivery.",
         orderId: newOrder._id,
       });
     } catch (error) {
@@ -68,5 +74,4 @@ module.exports = {
       });
     }
   },
-
 };

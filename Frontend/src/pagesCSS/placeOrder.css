@@ -39,28 +39,13 @@
   outline-color: tomato;
   font-size: 16px;
   cursor: pointer;
-}
-
-/* Right side cart total */
-.order-right {
-  width: 100%;
-  max-width: max(40%, 500px);
-}
-
-.cart-total button {
-  margin-top: 30px;
-  padding: 10px 15px;
-  background-color: tomato;
-  color: white;
-  font-weight: 600;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
   transition: 0.2s all;
+  margin-top: 10px;
 }
 
-.cart-total button:hover {
-  background-color: #e03d2d;
+.payment-dropdown:hover {
+  border-color: tomato;
+  background-color: #fff5f0;
 }
 
 .cart-item-summary {
@@ -83,13 +68,33 @@
   width: 100%;
 }
 
+.order-right {
+  width: 100%;
+  max-width: max(40%, 500px);
+}
+
+.cart-total button {
+  margin-top: 30px;
+  padding: 10px 15px;
+  background-color: tomato;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.cart-total button:hover {
+  background-color: #e03d2d;
+}
+
 .total-details {
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
-/* Notification popup */
 .order-notification {
   position: fixed;
   top: 20px;
@@ -99,26 +104,40 @@
   font-weight: 600;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   z-index: 1000;
-  animation: popupFade 0.5s ease-in-out;
-  color: white;
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+.order-notification.show {
+  animation: fadeInOut 5s forwards;
 }
 
 .order-notification.success {
   background-color: #4bb543;
+  color: white;
 }
 
 .order-notification.error {
   background-color: #ff4d4f;
+  color: white;
 }
 
-@keyframes popupFade {
+@keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(-20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  20% { opacity: 1; transform: translateY(0); }   
+  80% { opacity: 1; transform: translateY(0); }    
+  100% { opacity: 0; transform: translateY(-20px); }
 }
+
 
 @media (max-width: 750px) {
   .place-order {
     display: flex;
     flex-direction: column;
+  }
+
+  .order-left, .order-right {
+    max-width: 100%;
   }
 }

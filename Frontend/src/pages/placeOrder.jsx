@@ -24,7 +24,7 @@ const PlaceOrder = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
 
   // Notification state
-  const [notification, setNotification] = useState({ message: "", type: "" });
+  const [notification, setNotification] = useState({ message: "", type: "", show: false });
 
   const onChangeHandler = (e) => {
     const name = e.target.name;
@@ -33,27 +33,28 @@ const PlaceOrder = () => {
   };
 
   const showNotification = (message, type = "success") => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+    setNotification({ message, type, show: true });
+
+    // Hide after 5 seconds
+    setTimeout(() => {
+      setNotification((prev) => ({ ...prev, show: false }));
+    }, 5000);
   };
 
   const placeOrderHandler = async (e) => {
     e.preventDefault();
 
-    // Validate payment method
     if (!paymentMethod) {
       showNotification("Please select a payment method.", "error");
       return;
     }
 
-    // Check if cart is empty
     const totalItems = Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
     if (totalItems === 0) {
       showNotification("Your cart is empty! Add items to place an order.", "error");
       return;
     }
 
-    // Prepare order items
     const orderItems = food_list
       .filter((item) => cartItems[item._id] > 0)
       .map((item) => ({ ...item, quantity: cartItems[item._id] }));
@@ -88,7 +89,6 @@ const PlaceOrder = () => {
 
         showNotification("Your order has been successfully placed!", "success");
 
-        // Redirect for online payments
         if (paymentMethod !== "COD") {
           window.location.replace(response.data.session_url);
         }
@@ -103,7 +103,6 @@ const PlaceOrder = () => {
 
   return (
     <form onSubmit={placeOrderHandler} className="place-order">
-      {/* LEFT: Delivery info + payment */}
       <div className="order-left">
         <p>Delivery Information</p>
 
@@ -190,7 +189,6 @@ const PlaceOrder = () => {
           placeholder="Phone"
         />
 
-        {/* PAYMENT OPTIONS */}
         <p style={{ marginTop: "30px", fontWeight: 600 }}>Payment Method</p>
         <select
           className="payment-dropdown"
@@ -205,7 +203,6 @@ const PlaceOrder = () => {
         </select>
       </div>
 
-      {/* RIGHT: Cart items */}
       <div className="order-right">
         <div className="cart-total">
           <h2>Cart Summary</h2>
@@ -243,9 +240,12 @@ const PlaceOrder = () => {
         </div>
       </div>
 
-      {/* Notification popup */}
       {notification.message && (
-        <div className={`order-notification ${notification.type}`}>
+        <div
+          className={`order-notification ${notification.type} ${
+            notification.show ? "show" : "hide"
+          }`}
+        >
           <p>{notification.message}</p>
         </div>
       )}
