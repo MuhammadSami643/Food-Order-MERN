@@ -239,7 +239,7 @@ const PlaceOrder = () => {
             <b>Total</b>
             <b>${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</b>
           </div>
-          <button type="submit">PROCEED TO PAYMENT</button>
+          <button type="submit">CONFIRM YOUR ORDER</button>
         </div>
       </div>
 
