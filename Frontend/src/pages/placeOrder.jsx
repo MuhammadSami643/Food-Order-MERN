@@ -4,7 +4,7 @@ import "../pagesCSS/placeOrder.css";
 import axios from "axios";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount, token, food_list, cartItems, url } =
+  const { getTotalCartAmount, token, food_list, cartItems, setCartItems, url } =
     useContext(StoreContext);
 
   // Form state
@@ -23,53 +23,81 @@ const PlaceOrder = () => {
   // Selected payment method
   const [paymentMethod, setPaymentMethod] = useState("");
 
+  // Notification state
+  const [notification, setNotification] = useState({ message: "", type: "" });
+
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+  };
+
   const placeOrderHandler = async (e) => {
     e.preventDefault();
 
+    // Validate payment method
     if (!paymentMethod) {
-      alert("Please select a payment method.");
+      showNotification("Please select a payment method.", "error");
+      return;
+    }
+
+    // Check if cart is empty
+    const totalItems = Object.values(cartItems).reduce((acc, qty) => acc + qty, 0);
+    if (totalItems === 0) {
+      showNotification("Your cart is empty! Add items to place an order.", "error");
       return;
     }
 
     // Prepare order items
-    let orderItems = [];
-    food_list.forEach((item) => {
-      if (cartItems[item._id] > 0) {
-        let itemInfo = { ...item, quantity: cartItems[item._id] };
-        orderItems.push(itemInfo);
-      }
-    });
+    const orderItems = food_list
+      .filter((item) => cartItems[item._id] > 0)
+      .map((item) => ({ ...item, quantity: cartItems[item._id] }));
 
-    let orderData = {
+    const orderData = {
       address: data,
       items: orderItems,
-      amount: getTotalCartAmount() + 2, // + delivery
+      amount: getTotalCartAmount() + 2,
       paymentMethod,
     };
 
     try {
-      let response = await axios.post(`${url}/order/place`, orderData, {
+      const response = await axios.post(`${url}/order/place`, orderData, {
         headers: { token },
       });
 
       if (response.data.success) {
-        if (paymentMethod === "COD") {
-          alert("Order placed successfully! Cash on Delivery selected.");
-        } else {
+        // Reset form and cart
+        setData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          street: "",
+          city: "",
+          state: "",
+          zipcode: "",
+          country: "",
+          phone: "",
+        });
+        setPaymentMethod("");
+        setCartItems({});
+
+        showNotification("Your order has been successfully placed!", "success");
+
+        // Redirect for online payments
+        if (paymentMethod !== "COD") {
           window.location.replace(response.data.session_url);
         }
       } else {
-        alert("Error placing order.");
+        showNotification("Error placing order. Try again!", "error");
       }
     } catch (error) {
       console.error(error);
-      alert("Error placing order.");
+      showNotification("Error placing order. Try again!", "error");
     }
   };
 
@@ -164,77 +192,40 @@ const PlaceOrder = () => {
 
         {/* PAYMENT OPTIONS */}
         <p style={{ marginTop: "30px", fontWeight: 600 }}>Payment Method</p>
-        <div className="payment-options">
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="COD"
-              checked={paymentMethod === "COD"}
-              onChange={() => setPaymentMethod("COD")}
-            />
-            Cash on Delivery
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="Easypaisa"
-              checked={paymentMethod === "Easypaisa"}
-              onChange={() => setPaymentMethod("Easypaisa")}
-            />
-            Easypaisa
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="JazzCash"
-              checked={paymentMethod === "JazzCash"}
-              onChange={() => setPaymentMethod("JazzCash")}
-            />
-            JazzCash
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              value="Bank"
-              checked={paymentMethod === "Bank"}
-              onChange={() => setPaymentMethod("Bank")}
-            />
-            Bank Transfer
-          </label>
-        </div>
+        <select
+          className="payment-dropdown"
+          value={paymentMethod}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        >
+          <option value="">Select Payment Method</option>
+          <option value="COD">Cash on Delivery</option>
+          <option value="Easypaisa">Easypaisa</option>
+          <option value="JazzCash">JazzCash</option>
+          <option value="Bank">Bank Transfer</option>
+        </select>
       </div>
 
       {/* RIGHT: Cart items */}
       <div className="order-right">
         <div className="cart-total">
           <h2>Cart Summary</h2>
-          {food_list.map((item) => {
-            if (cartItems[item._id] > 0) {
-              return (
-                <div key={item._id} className="cart-item-summary">
-                  <img
-                    src={url + "/images/" + item.image}
-                    alt={item.name}
-                    className="cart-item-image"
-                  />
-                  <div className="cart-item-details">
-                    <p>
-                      {item.name} x {cartItems[item._id]}
-                    </p>
-                    <p>${item.price * cartItems[item._id]}</p>
-                  </div>
+          {food_list.map((item) =>
+            cartItems[item._id] > 0 ? (
+              <div key={item._id} className="cart-item-summary">
+                <img
+                  src={url + "/images/" + item.image}
+                  alt={item.name}
+                  className="cart-item-image"
+                />
+                <div className="cart-item-details">
+                  <p>
+                    {item.name} x {cartItems[item._id]}
+                  </p>
+                  <p>${item.price * cartItems[item._id]}</p>
                 </div>
-              );
-            }
-            return null;
-          })}
+              </div>
+            ) : null
+          )}
           <hr />
           <div className="total-details">
             <p>Sub Total</p>
@@ -251,6 +242,13 @@ const PlaceOrder = () => {
           <button type="submit">PROCEED TO PAYMENT</button>
         </div>
       </div>
+
+      {/* Notification popup */}
+      {notification.message && (
+        <div className={`order-notification ${notification.type}`}>
+          <p>{notification.message}</p>
+        </div>
+      )}
     </form>
   );
 };

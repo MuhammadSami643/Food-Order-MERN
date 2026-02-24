@@ -7,15 +7,20 @@ import { StoreContext } from "../context/StoreContext";
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("Home");
 
-  const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
+  const { getTotalCartAmount, token, setToken } =
+    useContext(StoreContext);
 
-  //if user logged out navigate it through given route
   const navigate = useNavigate();
 
+  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     navigate("/");
+  };
+
+  const goToOrders = () => {
+    navigate("/my-orders");
   };
 
   return (
@@ -24,6 +29,7 @@ const Navbar = ({ setShowLogin }) => {
         <Link to="/">
           <img src={assets.logo} alt="Logo" className="logo" />
         </Link>
+
         <ul className="menu">
           <Link
             to="/"
@@ -32,6 +38,7 @@ const Navbar = ({ setShowLogin }) => {
           >
             Home
           </Link>
+
           <a
             href="#vMenu"
             onClick={() => setMenu("Menu")}
@@ -39,6 +46,7 @@ const Navbar = ({ setShowLogin }) => {
           >
             Menu
           </a>
+
           <a
             href="#mobile-app"
             onClick={() => setMenu("Mobile App")}
@@ -46,6 +54,7 @@ const Navbar = ({ setShowLogin }) => {
           >
             Mobile App
           </a>
+
           <a
             href="#footer"
             onClick={() => setMenu("Contact Us")}
@@ -54,25 +63,38 @@ const Navbar = ({ setShowLogin }) => {
             Contact Us
           </a>
         </ul>
+
         <div className="nav-right">
           <img src={assets.search_icon} alt="Search" />
+
           <div className="nav-search-icon">
             <NavLink to="/cart">
               <img src={assets.basket_icon} alt="Cart" />
             </NavLink>
-            <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
+            <div
+              className={
+                getTotalCartAmount() === 0 ? "" : "dot"
+              }
+            ></div>
           </div>
+
           {!token ? (
-            <button onClick={() => setShowLogin(true)}>Sign Up</button>
+            <button onClick={() => setShowLogin(true)}>
+              Sign Up
+            </button>
           ) : (
             <div className="navbar-profile">
               <img src={assets.profile_icon} alt="profile" />
+
               <ul className="profile-dropdown">
-                <li>
+                
+                <li onClick={goToOrders}>
                   <img src={assets.bag_icon} alt="Bag" />
                   <p>Orders</p>
                 </li>
+
                 <hr />
+
                 <li onClick={logout}>
                   <img src={assets.logout_icon} alt="Logout" />
                   <p>Logout</p>
